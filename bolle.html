@@ -14,24 +14,40 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 
+ 
   <style>
     /* Layout di base */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    /* Contenitore per centrare */
+
+    /* Contenitore per centrare il contenuto verticalmente e orizzontalmente */
     .chart-container {
-      min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background-color: #f8f9fa; 
       padding: 1rem;
+
+
+        width: 80vw;  /* 100% della larghezza viewport */
+      height: 70vh;  /* 90% dell'altezza viewport (o 100vh per fullscreen) */
     }
+    .chart-container .card {
+  width: 90%;
+  height: 90%;
+  display: flex;           /* per permettere al canvas di crescere */
+  flex-direction: column;  /* se hai un titolo e un bottone, vanno in colonna */
+}
+.chart-container .card canvas {
+ width: 100%; height: auto; 
+}
     #myChart {
-      cursor: crosshair;
+      cursor: crosshair; 
       border: 1px solid #ddd;
       background-color: #fff;
     }
@@ -46,7 +62,7 @@
     <h6 class="text-center mb-3">Idealmente, rifai questo grafico ogni mese. 
       <br> Le bolle dovrebbero spostarsi verso destra in altro e verso sinistra in basso.</h6>
     <button id="printBtn" class="btn btn-secondary m-3">Stampa Pagina</button>
-    <canvas id="myChart" width="600" height="400"></canvas>
+    <canvas id="myChart" ></canvas>
   </div>
 </div>
 
@@ -181,7 +197,8 @@
       datasets: []
     },
     options: {
-      responsive: false,
+      responsive: true,
+      maintainAspectRatio: true,
       scales: {
         x: {
           title: {
