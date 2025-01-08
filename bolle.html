@@ -39,13 +39,13 @@
 <body>
 <div id="header"></div> 
 <div class="chart-container">
-  <div class="card shadow" style="padding: 1rem;">
-    <h3 class="text-center mb-3">Inserisci qui quello che faii</h3>
+  <div class="card shadow p-3">
+    <h3 class="text-center mb-3">Grafico a Bolle Interattivo</h3>
     <canvas id="myChart" width="600" height="400"></canvas>
   </div>
 </div>
 
-<!-- Modale Bootstrap -->
+<!-- Modale Bootstrap per aggiungere/modificare bolle -->
 <div 
   class="modal fade" 
   id="myModal" 
@@ -66,6 +66,7 @@
         ></button>
       </div>
       <div class="modal-body">
+        <!-- NOME ATTIVITÀ -->
         <div class="mb-3">
           <label for="activityName" class="form-label">
             Nome attività <span class="text-danger">*</span>
@@ -79,6 +80,23 @@
           />
         </div>
 
+        <!-- TIPO -->
+        <div class="mb-3">
+          <label for="activityType" class="form-label">
+            Tipo <span class="text-danger">*</span>
+          </label>
+          <select class="form-select" id="activityType" required>
+            <option value="">-- Seleziona --</option>
+            <option value="sport">Sport</option>
+            <option value="doveri">Doveri</option>
+            <option value="divertimenti">Divertimenti</option>
+            <option value="attività culturali">Attività culturali</option>
+            <option value="attività sociali">Attività sociali</option>
+            <option value="altro">Altro</option>
+          </select>
+        </div>
+
+        <!-- TEMPO IMPIEGATO (RAGGIO) -->
         <div class="mb-3">
           <label for="timeSpent" class="form-label">
             Tempo impiegato (raggio) <small>(1-10)</small> <span class="text-danger">*</span>
@@ -90,20 +108,6 @@
             placeholder="Inserisci un valore 1-10" 
             min="1" 
             max="10"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
-          <label for="colorPicker" class="form-label">
-            Colore palla <span class="text-danger">*</span>
-          </label>
-          <input 
-            type="color" 
-            class="form-control form-control-color" 
-            id="colorPicker" 
-            value="#29b6f6"
-            title="Scegli un colore"
             required
           />
         </div>
@@ -129,42 +133,45 @@
   </div>
 </div>
 
-<!-- Bootstrap 5 JS (necessario per la modale) -->
+<!-- Bootstrap 5 JS -->
 <script 
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>
 
 <script>
-  // Inizializza la modale di Bootstrap
-  const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
-    backdrop: 'static'
-  });
+  // Mappa "tipo -> colore"
+  // Puoi personalizzare i colori come preferisci
+  const colorMap = {
+    'sport': '#29b6f6',
+    'doveri': '#f6a229',
+    'divertimenti': '#f629ae',
+    'attività culturali': '#9b29f6',
+    'attività sociali': '#29f643',
+    'altro': '#555555'
+  };
 
   // Riferimenti ai campi della modale
   const activityName   = document.getElementById('activityName');
+  const activityType   = document.getElementById('activityType');
   const timeSpentInput = document.getElementById('timeSpent');
-  const colorPicker    = document.getElementById('colorPicker');
   const saveBtn        = document.getElementById('saveBtn');
   const cancelBtn      = document.getElementById('cancelBtn');
   const closeXBtn      = document.getElementById('closeXBtn');
 
-  // Variabili per la logica di creazione/modifica
-  let editIndex = null;
+  // Indici temporanei per capire se stiamo modificando un punto esistente
+  let editDatasetIndex = null;
+  let editBubbleIndex  = null;
+
+  // Per salvare temporaneamente le coordinate del click
   let tempX = 0;
   let tempY = 0;
 
-  // Configuriamo il grafico
+  // Inizializziamo un grafico bubble senza dataset
   const ctx = document.getElementById('myChart').getContext('2d');
-
   const myChart = new Chart(ctx, {
     type: 'bubble',
     data: {
-      datasets: [
-        {
-          label: 'Attività',
-          data: []
-        }
-      ]
+      datasets: []
     },
     options: {
       responsive: false,
@@ -176,7 +183,7 @@
           },
           min: -10,
           max: 10,
-          // Mostriamo solo la linea di x=0 (in nero), le altre linee sono trasparenti
+          // Visualizziamo solo la linea x=0
           grid: {
             color: (ctx) => (ctx.tick.value === 0 ? '#000' : 'transparent'),
             lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 0)
@@ -192,7 +199,7 @@
           },
           min: -10,
           max: 10,
-          // Mostriamo solo la linea di y=0 (in nero), le altre linee sono trasparenti
+          // Visualizziamo solo la linea y=0
           grid: {
             color: (ctx) => (ctx.tick.value === 0 ? '#000' : 'transparent'),
             lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 0)
@@ -203,16 +210,22 @@
         }
       },
       plugins: {
+        // Mostra la leggenda
+        legend: {
+          display: true
+        },
+        // Tooltip per mostrare info
         tooltip: {
           callbacks: {
             label: function(context) {
               const pointData = context.dataset.data[context.dataIndex];
+              // dataset.label = il "tipo", pointData.nome = il nome attività
               return (
-                pointData.label +
-                ' (X: ' + pointData.x +
+                pointData.nome +
+                ' (tipo: ' + context.dataset.label + ')' +
+                ' [X: ' + pointData.x +
                 ', Y: ' + pointData.y +
-                ', r: ' + pointData.r +
-                (pointData.colore ? ', colore: ' + pointData.colore : '') + ')'
+                ', r: ' + pointData.r + ']'
               );
             }
           }
@@ -221,99 +234,143 @@
     }
   });
 
-  // Funzioni per mostrare/nascondere la modale
-  function showModal(data = null) {
-    if (data) {
-      // Modal in modifica
-      document.getElementById('myModalLabel').textContent = 'Modifica Attività';
-      activityName.value       = data.label || '';
-      timeSpentInput.value     = data.r || '';
-      colorPicker.value        = data.colore || data.backgroundColor || '#29b6f6';
-      tempX = data.x;
-      tempY = data.y;
-    } else {
-      // Modal in creazione
-      document.getElementById('myModalLabel').textContent = 'Aggiungi Attività';
-      activityName.value       = '';
-      timeSpentInput.value     = '';
-      colorPicker.value        = '#29b6f6';
+  // Funzione per ottenere o creare un dataset corrispondente al "tipo"
+  // Se esiste, restituisce quello; altrimenti lo crea
+  function getOrCreateDataset(tipo) {
+    let ds = myChart.data.datasets.find(d => d.label === tipo);
+    if (!ds) {
+      // Creiamo un dataset per questo tipo
+      ds = {
+        label: tipo,
+        data: [],
+        backgroundColor: colorMap[tipo] || '#000',
+        borderColor: colorMap[tipo] || '#000',
+        borderWidth: 1
+      };
+      myChart.data.datasets.push(ds);
     }
-    myModal.show();
-  }
-  function hideModal() {
-    myModal.hide();
+    return ds;
   }
 
-  // Gestione click sul grafico
-  myChart.canvas.addEventListener('click', function(e) {
-    // Controlliamo se è un click su una bolla esistente
+  // Funzione per rilevare se l'utente ha cliccato su una bolla esistente
+  // Restituisce un oggetto con datasetIndex, dataIndex oppure null
+  function findClickedBubble(e) {
     const points = myChart.getElementsAtEventForMode(
       e, 
       'nearest', 
       { intersect: true }, 
       true
     );
-
     if (points.length > 0) {
-      // MODIFICA
-      const firstPoint   = points[0];
-      const datasetIndex = firstPoint.datasetIndex;
-      const index        = firstPoint.index;
+      const firstPoint = points[0];
+      return {
+        datasetIndex: firstPoint.datasetIndex,
+        dataIndex: firstPoint.index
+      };
+    }
+    return null;
+  }
 
-      const pointData = myChart.data.datasets[datasetIndex].data[index];
-      editIndex = index;
-      showModal(pointData);
+  // Funzione per mostrare la modale
+  // Se "existingData" esiste, stiamo modificando
+  function showModal(existingData = null, datasetIndex = null) {
+    const modalTitle = document.getElementById('myModalLabel');
+    if (existingData) {
+      modalTitle.textContent = 'Modifica Attività';
+      activityName.value   = existingData.nome || '';
+      timeSpentInput.value = existingData.r || '';
+      // Il "tipo" è il label del dataset
+      const oldTipo        = myChart.data.datasets[datasetIndex].label;
+      activityType.value   = oldTipo;
+      // Manteniamo le coordinate
+      tempX = existingData.x;
+      tempY = existingData.y;
     } else {
-      // CREAZIONE NUOVO PUNTO
+      modalTitle.textContent = 'Aggiungi Attività';
+      activityName.value     = '';
+      activityType.value     = '';
+      timeSpentInput.value   = '';
+    }
+    const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+      backdrop: 'static'
+    });
+    myModal.show();
+  }
+
+  // Chiude la modale
+  function hideModal() {
+    const myModalEl = document.getElementById('myModal');
+    const myModal   = bootstrap.Modal.getInstance(myModalEl);
+    myModal.hide();
+  }
+
+  // Evento di click sul grafico
+  myChart.canvas.addEventListener('click', (e) => {
+    // Verifichiamo se l'utente ha cliccato su una bolla esistente
+    const bubbleInfo = findClickedBubble(e);
+    if (bubbleInfo) {
+      // Sì, stiamo modificando
+      editDatasetIndex = bubbleInfo.datasetIndex;
+      editBubbleIndex  = bubbleInfo.dataIndex;
+      const ds         = myChart.data.datasets[editDatasetIndex];
+      const pointData  = ds.data[editBubbleIndex];
+      showModal(pointData, editDatasetIndex);
+    } else {
+      // Spazio vuoto -> creazione
+      editDatasetIndex = null;
+      editBubbleIndex  = null;
       const xVal = myChart.scales.x.getValueForPixel(e.offsetX);
       const yVal = myChart.scales.y.getValueForPixel(e.offsetY);
-
       tempX = parseFloat(xVal.toFixed(1));
       tempY = parseFloat(yVal.toFixed(1));
-      editIndex = null;
       showModal();
     }
   });
 
-  // Click su "Salva"
+  // Gestione salvataggio
   saveBtn.addEventListener('click', () => {
     const nameAttivita = activityName.value.trim();
-    const color        = colorPicker.value;
-    let r              = parseFloat(timeSpentInput.value);
+    const tipoAttivita = activityType.value;
+    let r = parseFloat(timeSpentInput.value);
 
-    // Validazioni
+    // Validazioni base
     if (!nameAttivita) {
       alert("Il nome dell'attività è obbligatorio.");
+      return;
+    }
+    if (!tipoAttivita) {
+      alert("Seleziona il tipo di attività.");
       return;
     }
     if (isNaN(r) || r < 1 || r > 10) {
       alert("Il raggio deve essere un numero fra 1 e 10.");
       return;
     }
-    if (!color) {
-      alert("Il colore è obbligatorio.");
-      return;
-    }
 
-    if (editIndex !== null) {
-      // MODIFICA
-      myChart.data.datasets[0].data[editIndex] = {
+    // Prendiamo o creiamo il dataset corrispondente al tipo selezionato
+    const dsNew = getOrCreateDataset(tipoAttivita);
+
+    if (editBubbleIndex !== null && editDatasetIndex !== null) {
+      // Stiamo modificando un punto esistente
+      const dsOld = myChart.data.datasets[editDatasetIndex];
+      // Rimuoviamo il punto dal vecchio dataset
+      dsOld.data.splice(editBubbleIndex, 1);
+
+      // Ora aggiungiamo il punto al nuovo dataset (potrebbe essere lo stesso se il tipo non è cambiato)
+      dsNew.data.push({
         x: tempX,
         y: tempY,
         r: r,
-        label: nameAttivita,
-        backgroundColor: color,
-        colore: color
-      };
+        nome: nameAttivita
+      });
+
     } else {
-      // CREAZIONE
-      myChart.data.datasets[0].data.push({
+      // Stiamo creando un nuovo punto
+      dsNew.data.push({
         x: tempX,
         y: tempY,
         r: r,
-        label: nameAttivita,
-        backgroundColor: color,
-        colore: color
+        nome: nameAttivita
       });
     }
 
@@ -321,10 +378,11 @@
     hideModal();
   });
 
-  // Pulsanti di annullamento/chiusura
+  // Annulla
   cancelBtn.addEventListener('click', hideModal);
   closeXBtn.addEventListener('click', hideModal);
 </script>
+  
 <div id="footer"></div> 
   <script>
   fetch('header.html')
