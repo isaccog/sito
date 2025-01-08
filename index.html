@@ -1,105 +1,171 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Grafico a Bolle Interattivo</title>
-  <!-- Chart.js da CDN -->
+  <meta charset="UTF-8" />
+  <title>Grafico a Bolle Interattivo - Evidenzia x=0 e y=0</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+  
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    /* Centriamo la pagina e il grafico */
+    /* Layout di base */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0f0f0;
-      box-sizing: border-box;
     }
-
-    #chartContainer {
-      background-color: #ffffff;
-      padding: 20px;
-      border: 1px solid #ccc;
-      position: relative;
-    }
-
-    #myChart {
-      cursor: crosshair; /* Indica che si può cliccare */
-    }
-
-    /* Stili per la modale */
-    #modalOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: none; /* Inizialmente nascosto */
-      justify-content: center;
-      align-items: center;
-    }
-    #modalContent {
-      background: #fff;
+    /* Contenitore per centrare */
+    .chart-container {
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background-color: #f8f9fa; 
       padding: 1rem;
-      border-radius: 8px;
-      min-width: 300px;
     }
-    label {
-      display: block;
-      margin-top: 0.5rem;
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="color"] {
-      width: 90%;
-      margin-bottom: 0.5rem;
-    }
-    button {
-      margin-right: 0.5rem;
-      margin-top: 0.5rem;
+    #myChart {
+      cursor: crosshair;
+      border: 1px solid #ddd;
+      background-color: #fff;
     }
   </style>
 </head>
 
 <body>
 
-<div id="chartContainer">
-  <canvas id="myChart" width="600" height="400"></canvas>
-</div>
-
-<!-- Modale per la creazione/modifica dei dati del punto -->
-<div id="modalOverlay">
-  <div id="modalContent">
-    <h2 id="modalTitle">Aggiungi/Modifica Attività</h2>
-
-    <label for="activityName">Nome attività:</label>
-    <input type="text" id="activityName" placeholder="Inserisci nome..." />
-
-    <label for="timeSpent">Tempo impiegato (raggio):</label>
-    <input type="number" id="timeSpent" placeholder="Inserisci un valore 1-10" min="1" max="10" />
-
-    <label for="colorPicker">Colore palla:</label>
-    <input type="color" id="colorPicker" value="#29b6f6" />
-
-    <button id="saveBtn">Salva</button>
-    <button id="cancelBtn">Annulla</button>
+<div class="chart-container">
+  <div class="card shadow" style="padding: 1rem;">
+    <h3 class="text-center mb-3">Grafico a Bolle Interattivo</h3>
+    <canvas id="myChart" width="600" height="400"></canvas>
   </div>
 </div>
 
+<!-- Modale Bootstrap -->
+<div 
+  class="modal fade" 
+  id="myModal" 
+  tabindex="-1" 
+  aria-labelledby="myModalLabel" 
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel">Aggiungi/Modifica Attività</h5>
+        <button 
+          type="button" 
+          class="btn-close" 
+          data-bs-dismiss="modal" 
+          aria-label="Close"
+          id="closeXBtn"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="activityName" class="form-label">
+            Nome attività <span class="text-danger">*</span>
+          </label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="activityName" 
+            placeholder="Inserisci nome..." 
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="timeSpent" class="form-label">
+            Tempo impiegato (raggio) <small>(1-10)</small> <span class="text-danger">*</span>
+          </label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="timeSpent" 
+            placeholder="Inserisci un valore 1-10" 
+            min="1" 
+            max="10"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="colorPicker" class="form-label">
+            Colore palla <span class="text-danger">*</span>
+          </label>
+          <input 
+            type="color" 
+            class="form-control form-control-color" 
+            id="colorPicker" 
+            value="#29b6f6"
+            title="Scegli un colore"
+            required
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          id="cancelBtn" 
+          data-bs-dismiss="modal"
+        >
+          Annulla
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          id="saveBtn"
+        >
+          Salva
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS (necessario per la modale) -->
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+
 <script>
-  // Inizializziamo il grafico a bolle vuoto
+  // Inizializza la modale di Bootstrap
+  const myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+    backdrop: 'static'
+  });
+
+  // Riferimenti ai campi della modale
+  const activityName   = document.getElementById('activityName');
+  const timeSpentInput = document.getElementById('timeSpent');
+  const colorPicker    = document.getElementById('colorPicker');
+  const saveBtn        = document.getElementById('saveBtn');
+  const cancelBtn      = document.getElementById('cancelBtn');
+  const closeXBtn      = document.getElementById('closeXBtn');
+
+  // Variabili per la logica di creazione/modifica
+  let editIndex = null;
+  let tempX = 0;
+  let tempY = 0;
+
+  // Configuriamo il grafico
   const ctx = document.getElementById('myChart').getContext('2d');
-  
+
   const myChart = new Chart(ctx, {
     type: 'bubble',
     data: {
-      datasets: [{
-        label: 'Attività',
-        data: []
-      }]
+      datasets: [
+        {
+          label: 'Attività',
+          data: []
+        }
+      ]
     },
     options: {
       responsive: false,
@@ -111,14 +177,13 @@
           },
           min: -10,
           max: 10,
-          // Rimuoviamo la griglia, ma lasciamo l’asse visibile in nero e “bold”
+          // Mostriamo solo la linea di x=0 (in nero), le altre linee sono trasparenti
           grid: {
-            display: false
+            color: (ctx) => (ctx.tick.value === 0 ? '#000' : 'transparent'),
+            lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 0)
           },
-          xAxes: {
-            display: true,
-            color: '#000',    // Colore nero
-            width: 3          // Spessore dell’asse (simile a "grassetto")
+          border: {
+            display: false
           }
         },
         y: {
@@ -128,13 +193,13 @@
           },
           min: -10,
           max: 10,
+          // Mostriamo solo la linea di y=0 (in nero), le altre linee sono trasparenti
           grid: {
-            display: false
+            color: (ctx) => (ctx.tick.value === 0 ? '#000' : 'transparent'),
+            lineWidth: (ctx) => (ctx.tick.value === 0 ? 2 : 0)
           },
           border: {
-            display: true,
-            color: '#000',    // Colore nero
-            width: 3          // Spessore dell’asse
+            display: false
           }
         }
       },
@@ -144,11 +209,11 @@
             label: function(context) {
               const pointData = context.dataset.data[context.dataIndex];
               return (
-                pointData.label + 
-                ' (X: ' + pointData.x + 
+                pointData.label +
+                ' (X: ' + pointData.x +
                 ', Y: ' + pointData.y +
-                ', r: ' + pointData.r + 
-                ', colore: ' + pointData.colore + ')'
+                ', r: ' + pointData.r +
+                (pointData.colore ? ', colore: ' + pointData.colore : '') + ')'
               );
             }
           }
@@ -157,121 +222,99 @@
     }
   });
 
-  // Variabili di riferimento per la modale e i campi
-  const modalOverlay   = document.getElementById('modalOverlay');
-  const modalTitle     = document.getElementById('modalTitle');
-  const activityName   = document.getElementById('activityName');
-  const timeSpentInput = document.getElementById('timeSpent');
-  const colorPicker    = document.getElementById('colorPicker');
-  const saveBtn        = document.getElementById('saveBtn');
-  const cancelBtn      = document.getElementById('cancelBtn');
-
-  // Variabili per distinguere se stiamo creando o modificando
-  // e per conservare temporaneamente le coordinate
-  let editIndex = null; // Se è null -> creazione; se ha valore -> modifica
-  let tempX = 0;
-  let tempY = 0;
-
-  // Funzione per mostrare la modale
-  // Se passiamo un oggetto "existingData", popola i campi per modificare un punto esistente
-  // Altrimenti, inizializziamo i campi per un nuovo punto
-  function showModal(existingData = null) {
-    modalOverlay.style.display = 'flex';
-
-    if (existingData) {
-      // Stiamo modificando un punto
-      modalTitle.textContent   = 'Modifica Attività';
-      activityName.value       = existingData.label || '';
-      timeSpentInput.value     = existingData.r || '';
-      colorPicker.value        = existingData.colore || existingData.backgroundColor || '#29b6f6';
-      // Manteniamo le coordinate esistenti
-      tempX = existingData.x;
-      tempY = existingData.y;
+  // Funzioni per mostrare/nascondere la modale
+  function showModal(data = null) {
+    if (data) {
+      // Modal in modifica
+      document.getElementById('myModalLabel').textContent = 'Modifica Attività';
+      activityName.value       = data.label || '';
+      timeSpentInput.value     = data.r || '';
+      colorPicker.value        = data.colore || data.backgroundColor || '#29b6f6';
+      tempX = data.x;
+      tempY = data.y;
     } else {
-      // Creazione nuovo punto
-      modalTitle.textContent   = 'Aggiungi Attività';
+      // Modal in creazione
+      document.getElementById('myModalLabel').textContent = 'Aggiungi Attività';
       activityName.value       = '';
       timeSpentInput.value     = '';
       colorPicker.value        = '#29b6f6';
-      // tempX e tempY sono già impostati dal click su uno spazio vuoto
     }
+    myModal.show();
   }
-
-  // Funzione per nascondere la modale
   function hideModal() {
-    modalOverlay.style.display = 'none';
+    myModal.hide();
   }
 
-  // Intercettiamo il click sul canvas
+  // Gestione click sul grafico
   myChart.canvas.addEventListener('click', function(e) {
-    // Verifichiamo se l'utente ha cliccato su una bolla esistente
-    const points = myChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+    // Controlliamo se è un click su una bolla esistente
+    const points = myChart.getElementsAtEventForMode(
+      e, 
+      'nearest', 
+      { intersect: true }, 
+      true
+    );
 
     if (points.length > 0) {
-      // Abbiamo cliccato su un punto esistente -> MODIFICA
+      // MODIFICA
       const firstPoint   = points[0];
       const datasetIndex = firstPoint.datasetIndex;
       const index        = firstPoint.index;
 
       const pointData = myChart.data.datasets[datasetIndex].data[index];
-      editIndex = index; // Salviamo quale punto stiamo modificando
-
-      showModal(pointData); // Passiamo i dati esistenti al form
+      editIndex = index;
+      showModal(pointData);
     } else {
-      // Nessun punto cliccato -> CREAZIONE di un nuovo punto
-      // Ricaviamo le coordinate cliccate
+      // CREAZIONE NUOVO PUNTO
       const xVal = myChart.scales.x.getValueForPixel(e.offsetX);
       const yVal = myChart.scales.y.getValueForPixel(e.offsetY);
 
       tempX = parseFloat(xVal.toFixed(1));
       tempY = parseFloat(yVal.toFixed(1));
-
-      editIndex = null; // Indica che stiamo creando un nuovo punto
+      editIndex = null;
       showModal();
     }
   });
 
-  // Al click su "Salva", creiamo o modifichiamo il punto
+  // Click su "Salva"
   saveBtn.addEventListener('click', () => {
     const nameAttivita = activityName.value.trim();
     const color        = colorPicker.value;
     let r              = parseFloat(timeSpentInput.value);
 
-    // Verifica che tutti i campi siano validi e obbligatori
+    // Validazioni
     if (!nameAttivita) {
       alert("Il nome dell'attività è obbligatorio.");
       return;
     }
-
-    if (isNaN(r) || r <= 0 || r > 10) {
-      alert("Il raggio deve essere un numero fra 0 e 10 (escluso 0, incluso 10).");
+    if (isNaN(r) || r < 1 || r > 10) {
+      alert("Il raggio deve essere un numero fra 1 e 10.");
       return;
     }
-
     if (!color) {
       alert("Il colore è obbligatorio.");
       return;
     }
 
     if (editIndex !== null) {
-      // Stiamo MODIFICANDO un punto esistente
+      // MODIFICA
       myChart.data.datasets[0].data[editIndex] = {
         x: tempX,
         y: tempY,
         r: r,
         label: nameAttivita,
         backgroundColor: color,
-        colore: color // nuova proprietà aggiuntiva
+        colore: color
       };
     } else {
-      // Stiamo CREANDO un nuovo punto
+      // CREAZIONE
       myChart.data.datasets[0].data.push({
         x: tempX,
         y: tempY,
         r: r,
         label: nameAttivita,
         backgroundColor: color,
-        colore: color // nuova proprietà aggiuntiva
+        colore: color
       });
     }
 
@@ -279,10 +322,9 @@
     hideModal();
   });
 
-  // Al click su "Annulla", chiudiamo la modale senza salvare
-  cancelBtn.addEventListener('click', () => {
-    hideModal();
-  });
+  // Pulsanti di annullamento/chiusura
+  cancelBtn.addEventListener('click', hideModal);
+  closeXBtn.addEventListener('click', hideModal);
 </script>
 
 </body>
