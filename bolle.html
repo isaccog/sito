@@ -11,6 +11,8 @@
   
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
 
   <style>
     /* Layout di base */
@@ -167,6 +169,8 @@
   let tempY = 0;
 
   // Inizializziamo un grafico bubble senza dataset
+  Chart.register(ChartDataLabels);
+
   const ctx = document.getElementById('myChart').getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'bubble',
@@ -209,7 +213,16 @@
           }
         }
       },
-      plugins: {
+      plugins: {// mostra le etichette
+       
+datalabels: {
+          formatter: (value) => {
+            return value.nome || '';
+          },
+          align: 'end',
+          anchor: 'end',
+          color: 'black'
+        },
         // Mostra la leggenda
         legend: {
           display: true
