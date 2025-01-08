@@ -3,4 +3,23 @@
   <meta charset="UTF-8" />
   <title>Grafico a Bolle Interattivo - Evidenzia x=0 e y=0</title>
 </head>
+  <body>
+  <div id="header"></div>
+
+      <script>
+  fetch('header.html')
+    .then(resp => resp.text())
+    .then(data => {
+      document.getElementById('header').innerHTML = data;
+    });
+
+  fetch('footer.html')
+    .then(resp => resp.text())
+    .then(data => {
+      document.getElementById('footer').innerHTML = data;
+    });
+</script>
+  <div id="footer"></div>
+    
+  </body>
 </html>
