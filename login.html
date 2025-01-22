@@ -37,7 +37,11 @@
 
   <body>
   <div id="header"></div>
-
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit">Accedi</button>
+  </form>
       <script>
   fetch('header.html')
     .then(resp => resp.text())
@@ -56,6 +60,25 @@
     const { Client } = Appwrite;
     const client = new Client();
 client.setProject('6790f26d002cb405c0af');
+  
+  const account = new Appwrite.Account(client);
+
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pass  = document.getElementById('password').value;
+
+      try {
+        await account.createEmailSession(email, pass);
+        alert('Login riuscito!');
+        // Reindirizza
+        window.location.href = 'home.html';
+      } catch (err) {
+        console.error(err);
+        alert('Login fallito: ' + err.message);
+      }
+    });
 </script>
 
       
