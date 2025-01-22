@@ -1,4 +1,3 @@
-   <script>
   fetch('header.html')
     .then(resp => resp.text())
     .then(data => {
@@ -10,4 +9,3 @@
     .then(data => {
       document.getElementById('footer').innerHTML = data;
     });
-</script>
