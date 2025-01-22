@@ -1,0 +1,161 @@
+<html>
+  <meta charset="UTF-8" />
+  <title>Un sito isacco</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+    html, body {
+      margin: 0; 
+      padding: 0;
+      width: 100%; 
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .ring-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-color: #fafafa;
+      overflow: hidden;
+    }
+
+    /* Contenitore generale del quadrato */
+    .square {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      /* Per vedere chiaramente la rotazione del "bordo" */
+      border: 2px solid #333;
+      box-sizing: border-box;
+      opacity: 0.7;
+      transition: opacity 0.01s, box-shadow 0.3s;
+      top: 50%;
+      left: 50%;
+      /* Partiamo dal centro... */
+      transform: translate(-50%, -50%);
+    }
+
+    /* Contenuto del quadrato (dove c'è il testo),
+       che ruoteremo in negativo per annullare la rotazione del contenitore */
+    .square .inner {
+      width: 100%;
+      height: 100%;
+      display: flex;            /* Per centrare il testo */
+      justify-content: center;
+      align-items: center;
+      font: 18px Arial, sans-serif;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Stato "attivo" per illuminarlo */
+    .square.active {
+      opacity: 1;
+      box-shadow: 0 0 15px 4px rgba(255, 255, 255, 0.8);
+    }
+
+    /* 
+      Distribuiamo i 5 quadrati a cerchio con un raggio di 250px.
+      Ognuno ha un'angolazione differente (rotate(angle)) 
+      e dopo la traslazione aggiungiamo l'angolo negativo sull'.inner
+
+      Esempio di logica:
+        .square.s1 -> rotate(0deg)   translate(250px)
+                      .inner -> rotate(-0deg)
+        .square.s2 -> rotate(72deg)  translate(250px)
+                      .inner -> rotate(-72deg)
+        ecc...
+    */
+    .square.s1 {
+      background-color: #f00;  /* rosso */
+      transform: translate(-50%, -50%)
+                 rotate(0deg)
+                 translate(250px);
+    }
+    .square.s1 .inner {
+      transform: rotate(-0deg);
+    }
+
+    .square.s2 {
+      background-color: #0f0;  /* verde */
+      transform: translate(-50%, -50%)
+                 rotate(72deg)
+                 translate(250px);
+    }
+    .square.s2 .inner {
+      transform: rotate(-72deg);
+    }
+
+    .square.s3 {
+      background-color: #00f;  /* blu */
+      transform: translate(-50%, -50%)
+                 rotate(144deg)
+                 translate(250px);
+    }
+    .square.s3 .inner {
+      transform: rotate(-144deg);
+    }
+
+    .square.s4 {
+      background-color: #ffa500; /* arancione */
+      transform: translate(-50%, -50%)
+                 rotate(216deg)
+                 translate(250px);
+    }
+    .square.s4 .inner {
+      transform: rotate(-216deg);
+    }
+
+    .square.s5 {
+      background-color: #800080; /* viola */
+      transform: translate(-50%, -50%)
+                 rotate(288deg)
+                 translate(250px);
+    }
+    .square.s5 .inner {
+      transform: rotate(-288deg);
+    }
+  </style>
+</head>
+
+  <body>
+  <div id="header"></div>
+
+<div class="ring-container">
+  <div class="square s1"><div class="inner">Cose</div></div>
+  <div class="square s2"><div class="inner">Corrosione</div></div>
+  <div class="square s3"><div class="inner">Banalità</div></div>
+  <div class="square s4"><div class="inner">Assurdità</div></div>
+  <div class="square s5"><div class="inner">Cose di cose</div></div>
+</div>
+
+<script>
+  const squares = document.querySelectorAll('.square');
+  let currentIndex = 0;
+
+  function illuminateNext() {
+    squares.forEach(sq => sq.classList.remove('active'));
+    squares[currentIndex].classList.add('active');
+    currentIndex = (currentIndex + 1) % squares.length;
+  }
+
+  // Avvio: illumina il primo
+  illuminateNext();
+  // Cambio ogni 1 secondo
+  setInterval(illuminateNext, 300);
+</script>
+
+  <div id="footer"></div>
+  <script src="/func.js"></script>
+
+  </body>
+</html>
