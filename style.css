@@ -1,9 +1,25 @@
-    /* Layout di base */
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
+ html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Header, contenuto espandibile, footer */
+}
+
+main {
+  padding: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}
+
     /* Contenitore per centrare */
     .chart-container {
       min-height: 100vh; 
