@@ -21,7 +21,7 @@ async function getRecordsAppWrite(Id = null, project = '6790f26d002cb405c0af', d
 window.getRecordsAppWrite = getRecordsAppWrite;
 
 
-  await getDocument()  fetch('/header.html')
+ getDocument()  fetch('/header.html')
     .then(resp => resp.text())
     .then(data => {
       document.getElementById('header').innerHTML = data;
