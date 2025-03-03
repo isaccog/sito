@@ -1,27 +1,25 @@
 // Importa i moduli necessari (assicurati di averli installati o usa lo script CDN)
 
-import { Client, Databases, Query } from 'appwrite';
-
-async function getRecordsAppWrite(Id=Null,project='6790f26d002cb405c0af', db='67b9b2060006cbdb292d', collection='67b9b23a00059abb3c7d')
-  {
-  // Inizializza il client Appwrite
-  const client = new Client();
+// func.js
+async function getRecordsAppWrite(Id = null, project = '6790f26d002cb405c0af', db = '67b9b2060006cbdb292d', collection = '67b9b23a00059abb3c7d') {
+  // Inizializza il client Appwrite usando l'oggetto globale Appwrite (incluso via CDN)
+  const client = new Appwrite.Client();
   client
-    .setEndpoint('https://cloud.appwrite.io/v1')  // Sostituisci con il tuo endpoint, se diverso
-    .setProject(project);              // Sostituisci con il tuo Project ID
+    .setEndpoint('https://cloud.appwrite.io/v1')
+    .setProject(project);
 
-  // Inizializza il servizio Database
-  const databases = new Databases(client);
-  let query=[]
-  if Id
-    {
-      query.push(Query.equal('$Id',Id))
-    }
-
-    return await databases.listDocuments(db, collection, query)  
-      
-    
+  const databases = new Appwrite.Databases(client);
+  let query = [];
+  if (Id) {
+    query.push(Appwrite.Query.equal('$id', Id));
   }
+
+  return await databases.listDocuments(db, collection, query);
+}
+
+// Rendi la funzione disponibile globalmente
+window.getRecordsAppWrite = getRecordsAppWrite;
+
 
   await getDocument()  fetch('/header.html')
     .then(resp => resp.text())
