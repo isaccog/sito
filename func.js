@@ -2,7 +2,7 @@
 
 import { Client, Databases, Query } from 'appwrite';
 
-async function getDocument(Id=Null,project='6790f26d002cb405c0af', db='67b9b2060006cbdb292d', collection='67b9b23a00059abb3c7d')
+async function getRecordsAppWrite(Id=Null,project='6790f26d002cb405c0af', db='67b9b2060006cbdb292d', collection='67b9b23a00059abb3c7d')
   {
   // Inizializza il client Appwrite
   const client = new Client();
