@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Blog</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <!-- Bootstrap 5 CSS -->
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+    />
+    <link rel="stylesheet" href="/style.css">
+    <style>
+      /* Stili per i post, puoi personalizzare */
+      .post-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      .post-header { border-bottom: 1px solid #ddd; margin-bottom: 15px; }
+      .post-title { font-size: 24px; color: #333; }
+      .post-meta { font-size: 14px; color: #777; }
+      .post-content p { font-size: 16px; line-height: 1.6; color: #444; }
+      .post-footer { border-top: 1px solid #ddd; margin-top: 15px; padding-top: 10px; text-align: right; }
+      .post-tags a { text-decoration: none; color: #007bff; margin-right: 5px; }
+      .post-tags a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div id="header"></div>
+    <main>
+      <!-- Contenitore per gli articoli del blog -->
+      <div id="posts"></div>
+    </main>
+    <div id="footer"></div>
+    
+    <!-- Includi il tuo file js con getDocument e la logica per popolare i post -->
+    <script src="/func.js"></script>
+    <script>
+      // Carica header e footer se necessari
+      fetch('/header.html')
+        .then(resp => resp.text())
+        .then(data => {
+          document.getElementById('header').innerHTML = data;
+        });
+      fetch('/footer.html')
+        .then(resp => resp.text())
+        .then(data => {
+          document.getElementById('footer').innerHTML = data;
+        });
+      
+      // Funzione per popolare la pagina con gli articoli del blog
+      async function loadBlogPosts() {
+        try {
+          // Richiama getDocument senza id per ottenere tutti gli articoli
+          const response = await getDocument(null);
+          // Supponiamo che la risposta abbia una proprietà "documents" (verifica la struttura)
+          const posts = response.documents;
+          const postsContainer = document.getElementById('posts');
+          postsContainer.innerHTML = ''; // Pulisci il contenitore
+
+          posts.forEach(post => {
+            // Costruisci l'HTML per ogni post.
+            // Adatta i campi (es. post.title, post.date, post.content, post.tag) in base alla tua struttura.
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post-container';
+            postDiv.innerHTML = `
+              <div class="post-header">
+                <h1 class="post-title">${post.title || 'Titolo non disponibile'}</h1>
+                <p class="post-meta">Pubblicato il ${new Date(post.date).toLocaleDateString()}</p>
+              </div>
+              <div class="post-content">
+                <p>${post.content || ''}</p>
+              </div>
+              <div class="post-footer">
+                <p class="post-tags">Tag: ${post.tag || ''}</p>
+              </div>
+            `;
+            postsContainer.appendChild(postDiv);
+          });
+        } catch (error) {
+          console.error("Errore nel caricamento dei post:", error);
+        }
+      }
+
+      // Avvia il caricamento degli articoli
+      loadBlogPosts();
+    </script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
