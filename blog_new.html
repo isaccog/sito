@@ -5,17 +5,10 @@
     <title>Blog</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <!-- Bootstrap 5 CSS -->
-    <link 
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-      rel="stylesheet" 
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/style.css">
-    <!-- Includi l'SDK Appwrite dal CDN -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
-<!-- Includi il tuo file custom di funzioni -->
-<script type="module" src="/func.js"></script>
     <style>
-      /* Stili per i post, puoi personalizzare */
+      /* Stili per i post */
       .post-container {
         max-width: 800px;
         margin: 20px auto;
@@ -33,6 +26,8 @@
       .post-tags a { text-decoration: none; color: #007bff; margin-right: 5px; }
       .post-tags a:hover { text-decoration: underline; }
     </style>
+    <!-- Includi l'SDK Appwrite dal CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
   </head>
   <body>
     <div id="header"></div>
@@ -42,8 +37,11 @@
     </main>
     <div id="footer"></div>
     
-    <script>
-      // Carica header e footer se necessari
+    <!-- Script principale come modulo -->
+    <script type="module">
+      import { getRecordsAppWrite } from '/func.js';
+
+      // Carica header e footer
       fetch('/header.html')
         .then(resp => resp.text())
         .then(data => {
@@ -58,16 +56,14 @@
       // Funzione per popolare la pagina con gli articoli del blog
       async function loadBlogPosts() {
         try {
-          // Richiama getDocument senza id per ottenere tutti gli articoli
+          // Richiama getRecordsAppWrite per ottenere tutti gli articoli
           const response = await getRecordsAppWrite(null);
-          // Supponiamo che la risposta abbia una proprietà "documents" (verifica la struttura)
+          // Supponiamo che la risposta abbia una proprietà "documents"
           const posts = response.documents;
           const postsContainer = document.getElementById('posts');
           postsContainer.innerHTML = ''; // Pulisci il contenitore
 
           posts.forEach(post => {
-            // Costruisci l'HTML per ogni post.
-            // Adatta i campi (es. post.title, post.date, post.content, post.tag) in base alla tua struttura.
             const postDiv = document.createElement('div');
             postDiv.className = 'post-container';
             postDiv.innerHTML = `
@@ -92,11 +88,8 @@
       // Avvia il caricamento degli articoli
       loadBlogPosts();
     </script>
+    
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Includi l'SDK Appwrite dal CDN -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
-<!-- Includi il tuo file custom di funzioni -->
-<script type="module" src="/func.js"></script>
   </body>
 </html>
