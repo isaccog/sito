@@ -61,7 +61,7 @@
       async function loadBlogPosts() {
         try {
           // Richiama getDocument senza id per ottenere tutti gli articoli
-          const response = await getDocument(null);
+          const response = await getRecordsAppWrite(null);
           // Supponiamo che la risposta abbia una proprietà "documents" (verifica la struttura)
           const posts = response.documents;
           const postsContainer = document.getElementById('posts');
