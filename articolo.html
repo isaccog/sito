@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Articolo</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+</head>
+<body>
+    <div id="header"></div>
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="card-body" id="post-body">
+      <!-- Qui verrà mostrato l'articolo completo -->
+    </div>
+  </div>
+</div>
+
+<!-- Script Appwrite + tuo file JS -->
+<script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0/dist/iife/sdk.min.js"></script>
+<script src="func.js"></script>
+<script>
+  // Legge la query string e prende l'ID
+  const params = new URLSearchParams(window.location.search);
+  const articoloId = params.get('id');
+
+  async function loadArticle() {
+    if (!articoloId) {
+      document.getElementById('post-body').innerHTML = '<p>Articolo non trovato</p>';
+      return;
+    }
+    try {
+      // Recupera il documento specifico
+      const response = await getRecordsAppWrite(articoloId);
+      const post = response.documents[0]; // Se c'è, è il primo
+
+      if (!post) {
+        document.getElementById('post-body').innerHTML = '<p>Articolo inesistente</p>';
+        return;
+      }
+
+      // Mostra i dati
+      document.getElementById('post-body').innerHTML = `
+        <h2 class="card-title">${post.titolo || 'Senza titolo'}</h2>
+        <p class="text-muted">Pubblicato il ${new Date(post.pubblicazione).toLocaleDateString()}</p>
+        <p>${post.testo || ''}</p>
+      `;
+    } catch (error) {
+      console.error("Errore caricamento articolo:", error);
+      document.getElementById('post-body').innerHTML = '<p>Errore nel recupero dell\'articolo</p>';
+    }
+  }
+
+  loadArticle();
+</script>
+<div id="footer"></div>
+</body>
+</html>

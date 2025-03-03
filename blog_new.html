@@ -1,102 +1,75 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Blog</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <!-- Bootstrap 5 CSS -->
-    <link 
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-      rel="stylesheet" 
-    />
-    <link rel="stylesheet" href="/style.css">
-    <!-- Includi l'SDK Appwrite dal CDN -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
-<!-- Includi il tuo file custom di funzioni -->
-<script type="module" src="/func.js"></script>
-    <style>
-      /* Stili per i post, puoi personalizzare */
-      .post-container {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-      .post-header { border-bottom: 1px solid #ddd; margin-bottom: 15px; }
-      .post-title { font-size: 24px; color: #333; }
-      .post-meta { font-size: 14px; color: #777; }
-      .post-content p { font-size: 16px; line-height: 1.6; color: #444; }
-      .post-footer { border-top: 1px solid #ddd; margin-top: 15px; padding-top: 10px; text-align: right; }
-      .post-tags a { text-decoration: none; color: #007bff; margin-right: 5px; }
-      .post-tags a:hover { text-decoration: underline; }
-    </style>
-  </head>
-  <body>
-    <div id="header"></div>
-    <main>
-      <!-- Contenitore per gli articoli del blog -->
-      <div id="posts"></div>
-    </main>
-    <div id="footer"></div>
-    
-    <script>
-      // Carica header e footer se necessari
-      fetch('/header.html')
-        .then(resp => resp.text())
-        .then(data => {
-          document.getElementById('header').innerHTML = data;
-        });
-      fetch('/footer.html')
-        .then(resp => resp.text())
-        .then(data => {
-          document.getElementById('footer').innerHTML = data;
-        });
+  
+<head>
+  <meta charset="UTF-8" />
+  <title>Blog</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+  />
+</head>
+<body>
+  <div id="header"></div>
+<div class="container my-5">
+  <h1 class="text-center mb-4">Elenco Articoli</h1>
+  <div class="row" id="posts-container">
+    <!-- Qui inseriremo le card degli articoli -->
+  </div>
+</div>
+
+<!-- Script Appwrite + tuo file JS -->
+ <!-- Includi l'SDK Appwrite dal CDN (una sola volta) -->
+ <script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0/dist/iife/sdk.min.js"></script>
+ <script src="func.js"></script>
+<script>
+  async function loadBlogPosts() {
+    try {
+      // Recupera tutti gli articoli da Appwrite
+      const response = await getRecordsAppWrite(null);
+      const posts = response.documents;
       
-      // Funzione per popolare la pagina con gli articoli del blog
-      async function loadBlogPosts() {
-        try {
-          // Richiama getDocument senza id per ottenere tutti gli articoli
-          const response = await getRecordsAppWrite(null);
-          // Supponiamo che la risposta abbia una proprietà "documents" (verifica la struttura)
-          const posts = response.documents;
-          const postsContainer = document.getElementById('posts');
-          postsContainer.innerHTML = ''; // Pulisci il contenitore
+      const container = document.getElementById('posts-container');
+      container.innerHTML = ''; // Pulizia contenitore
 
-          posts.forEach(post => {
-            // Costruisci l'HTML per ogni post.
-            // Adatta i campi (es. post.title, post.date, post.content, post.tag) in base alla tua struttura.
-            const postDiv = document.createElement('div');
-            postDiv.className = 'post-container';
-            postDiv.innerHTML = `
-              <div class="post-header">
-                <h1 class="post-title">${post.title || 'Titolo non disponibile'}</h1>
-                <p class="post-meta">Pubblicato il ${new Date(post.date).toLocaleDateString()}</p>
-              </div>
-              <div class="post-content">
-                <p>${post.content || ''}</p>
-              </div>
-              <div class="post-footer">
-                <p class="post-tags">Tag: ${post.tag || ''}</p>
-              </div>
-            `;
-            postsContainer.appendChild(postDiv);
-          });
-        } catch (error) {
-          console.error("Errore nel caricamento dei post:", error);
-        }
-      }
+      posts.forEach(post => {
+        // Card Bootstrap
+        const colDiv = document.createElement('div');
+        colDiv.className = 'col-md-6 mb-4';
+        colDiv.innerHTML = `
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="articolo.html?id=${post.$id}" class="text-decoration-none">${post.titolo || 'Senza titolo'}</a>
+              </h5>
+              <p class="card-text text-muted">
+                Pubblicato il ${new Date(post.pubblicazione).toLocaleDateString()}
+              </p>
+              <p class="card-text">
+                ${getExcerpt(post.testo)}
+              </p>
+              <a href="articolo.html?id=${post.$id}" class="btn btn-primary">Leggi di più</a>
+            </div>
+          </div>
+        `;
+        container.appendChild(colDiv);
+      });
+    } catch (error) {
+      console.error("Errore caricamento articoli:", error);
+    }
+  }
 
-      // Avvia il caricamento degli articoli
-      loadBlogPosts();
-    </script>
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Includi l'SDK Appwrite dal CDN -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
-<!-- Includi il tuo file custom di funzioni -->
-<script type="module" src="/func.js"></script>
-  </body>
+  // Funzione di utilità per estrarre un estratto (ad esempio 150 caratteri)
+  function getExcerpt(testo, lunghezza=150) {
+    if (!testo) return '';
+    return testo.length > lunghezza
+      ? testo.substring(0, lunghezza) + '...'
+      : testo;
+  }
+
+  loadBlogPosts();
+</script>
+<div id="footer"></div>
+</body>
 </html>
