@@ -7,6 +7,11 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/style.css">
+    <!-- Includi l'SDK Appwrite dal CDN -->
+<script src="https://cdn.jsdelivr.net/npm/appwrite@9.0.0/dist/appwrite.min.js"></script>
+<!-- Includi il tuo file custom di funzioni (senza type="module") -->
+<script src="/func.js"></script>
+    
     <style>
       /* Stili per i post */
       .post-container {
@@ -38,8 +43,7 @@
     <div id="footer"></div>
     
     <!-- Script principale come modulo -->
-    <script type="module">
-      import { getRecordsAppWrite } from '/func.js';
+    <script >
 
       // Carica header e footer
       fetch('/header.html')
