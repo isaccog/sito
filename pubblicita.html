@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <title>Galleria Isacco</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0/dist/iife/sdk.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .gallery-title {
+            text-align: center;
+            margin: 0rem 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .gallery-description {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #666;
+        }
+        .quote-slider {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            text-align: center;
+            font-style: italic;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #555;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .carousel-item img {
+    display: block;
+    margin: 0 auto;
+    max-width: 80%;
+    max-height: 50vh;
+    height: auto;
+    object-fit: contain;
+}
+.carousel-caption {
+    position: static;
+    text-align: center;
+    color: #333;
+    margin-top: 1rem;
+}
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    display: none;
+}
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;
+    font-size: 2.5rem;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.carousel-control-prev::after {
+    content: '\2190'; /* Freccia sinistra */
+    font-size: 2.5rem;
+    color: #000;
+}
+.carousel-control-next::after {
+    content: '\2192'; /* Freccia destra */
+    font-size: 2.5rem;
+    color: #000;
+}
+.carousel-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 150px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+    </style>
+</head>
+<body>
+    <div id="header"></div>
+    <main>
+        <div class="gallery-title">Guida pornografica della pubblicita</div>
+        <div class="gallery-description">E' pornografico ciò che si mostra senza nulla celare. 
+            <br>In questa raccolta di testi e immagini degli zelanti esperti di marketing non hanno coperto sufficentemente le oscenità che volevano raccontarci.
+        </div>
+
+        <div id="image-loader" class="loader"></div>
+        <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" style="display:none;">
+            <div class="carousel-inner" id="carousel-images"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <div id="quote-loader" class="loader"></div>
+        <div id="quoteCarousel" class="carousel slide quote-slider" data-bs-ride="carousel" style="display:none; margin-top: 4rem;">
+            <div class="carousel-inner" id="carousel-quotes"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#quoteCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#quoteCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </main>
+    <div id="footer"></div>
+
+<script>
+  const client = new Appwrite.Client();
+  client.setEndpoint('https://cloud.appwrite.io/v1').setProject('67ce05b00021f4e25caa');
+
+  const databases = new Appwrite.Databases(client);
+  const storage = new Appwrite.Storage(client);
+
+  async function loadImages() {
+    try {
+      const response = await databases.listDocuments('67ce05fd003b3c7b6b37', '67ce12a90008bc9b3aaf');
+      const carousel = document.getElementById('carousel-images');
+      carousel.innerHTML = '';
+
+      response.documents.forEach((doc, index) => {
+        const fileId = doc.bucketId;
+        const description = doc.description || '';
+        const imageUrl = storage.getFileView('682b06cb0020fcc67bb5', fileId);
+        const activeClass = index === 0 ? 'active' : '';
+        const item = `
+          <div class="carousel-item ${activeClass}">
+            <img src="${imageUrl}" class="d-block w-100" alt="Immagine">
+            <div class="carousel-caption d-none d-md-block">
+              <p>${description}</p>
+            </div>
+          </div>`;
+        carousel.innerHTML += item;
+      });
+
+      document.getElementById('image-loader').style.display = 'none';
+      document.getElementById('imageCarousel').style.display = 'block';
+    } catch (error) {
+      console.error("Errore caricamento immagini:", error);
+    }
+  }
+
+  async function loadQuotes() {
+    try {
+      const response = await databases.listDocuments('67ce05fd003b3c7b6b37', '682b0983000008f244f5');
+      const carousel = document.getElementById('carousel-quotes');
+      carousel.innerHTML = '';
+
+      response.documents.forEach((doc, index) => {
+        const quote = doc.cit || '';
+        const description = doc.description || '';
+        const activeClass = index === 0 ? 'active' : '';
+        const item = `
+          <div class="carousel-item ${activeClass}">
+            <div>"${quote}"<br><small>- ${description}</small></div>
+          </div>`;
+        carousel.innerHTML += item;
+      });
+
+      document.getElementById('quote-loader').style.display = 'none';
+      document.getElementById('quoteCarousel').style.display = 'block';
+    } catch (error) {
+      console.error("Errore caricamento citazioni:", error);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/header.html')
+      .then(resp => resp.text())
+      .then(data => document.getElementById('header').innerHTML = data);
+
+    fetch('/footer.html')
+      .then(resp => resp.text())
+      .then(data => document.getElementById('footer').innerHTML = data);
+
+    loadImages();
+    loadQuotes();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/header.html')
+        .then(resp => resp.text())
+        .then(data => document.getElementById('header').innerHTML = data);
+
+    fetch('/footer.html')
+        .then(resp => resp.text())
+        .then(data => document.getElementById('footer').innerHTML = data);
+
+    loadImages().then(() => {
+        const imageCarouselElement = document.querySelector('#imageCarousel');
+        const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
+            interval: 10000, // 10 secondi
+            ride: 'carousel',
+            pause: 'hover' // Si ferma se passi sopra col mouse
+        });
+    });
+
+    loadQuotes();
+});
+</script>
+<script>
+    // Aggiungi i counter dopo aver caricato le immagini e le citazioni
+    function addCarouselCounters() {
+        const imageCarousel = document.getElementById('imageCarousel');
+        const quoteCarousel = document.getElementById('quoteCarousel');
+    
+        const imageCounter = document.createElement('div');
+        imageCounter.className = 'carousel-counter';
+        imageCounter.id = 'image-counter';
+        imageCarousel.appendChild(imageCounter);
+    
+        const quoteCounter = document.createElement('div');
+        quoteCounter.className = 'carousel-counter';
+        quoteCounter.id = 'quote-counter';
+        quoteCarousel.appendChild(quoteCounter);
+    
+        updateCounter('imageCarousel', 'image-counter');
+        updateCounter('quoteCarousel', 'quote-counter');
+    
+        document.querySelector('#imageCarousel').addEventListener('slid.bs.carousel', () => {
+            updateCounter('imageCarousel', 'image-counter');
+        });
+        document.querySelector('#quoteCarousel').addEventListener('slid.bs.carousel', () => {
+            updateCounter('quoteCarousel', 'quote-counter');
+        });
+    }
+    
+    function updateCounter(carouselId, counterId) {
+        const carousel = document.getElementById(carouselId);
+        const items = carousel.querySelectorAll('.carousel-item');
+        const activeIndex = [...items].findIndex(item => item.classList.contains('active')) + 1;
+        const counter = document.getElementById(counterId);
+        counter.textContent = `${activeIndex}/${items.length}`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/header.html')
+            .then(resp => resp.text())
+            .then(data => document.getElementById('header').innerHTML = data);
+    
+        fetch('/footer.html')
+            .then(resp => resp.text())
+            .then(data => document.getElementById('footer').innerHTML = data);
+    
+        loadImages().then(() => {
+            const imageCarouselElement = document.querySelector('#imageCarousel');
+            const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
+                interval: 10000,
+                ride: 'carousel',
+                pause: 'hover'
+            });
+            addCarouselCounters();
+        });
+    
+        loadQuotes().then(() => {
+            addCarouselCounters();
+        });
+    });
+    </script>
+    
+</body>
+</html>
