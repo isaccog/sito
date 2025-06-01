@@ -80,4 +80,28 @@ footer {
 .ms-auto {
   margin-left: 0px !important; /* margine sinistro automatico per spingere a destra */}
 
+  .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+    max-width: 100% !important;
+  }
+
+  body, html {
+    overflow-x: hidden; /* evita lo scroll orizzontale indesiderato */
+  }
+
+
+
+  .content, .gallery-description, .gallery-title, .card-body, .carousel-caption, p, h1, h5 {
+    font-size: 1.8rem !important; /* aumenta significativamente la dimensione del testo */
+    line-height: 1.6 !important; /* spaziatura maggiore tra le righe per leggibilità */
+    word-wrap: break-word; /* andata a capo naturale */
+  }
+
+  .gallery-title {
+    font-size: 3rem !important; /* titolo più grande */
+  }
+
 }
