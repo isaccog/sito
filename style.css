@@ -34,3 +34,34 @@ footer {
       border: 1px solid #ddd;
       background-color: #fff;
     }
+
+
+/* Menu a schermo intero per mobile */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255,255,255,0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* sopra altri contenuti */
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .navbar-toggler {
+    z-index: 1100;
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 1.5rem;
+  }
+}
