@@ -59,9 +59,25 @@ footer {
 
   .navbar-toggler {
     z-index: 1100;
+    transform: scale(2); /* bottone più grande */
+    border: none;
   }
 
   .navbar-nav .nav-link {
-    font-size: 1.5rem;
+    font-size: 3rem; /* voci del menu più grandi */
+    padding: 10px;
   }
+  .navbar-brand {
+    font-size: 3rem; /* titolo più grande */
+  }
+
+
+  .navbar-collapse {
+    justify-content: center; /* menù centrato */
+    text-align: center;
+
+}
+.ms-auto {
+  margin-left: 0px !important; /* margine sinistro automatico per spingere a destra */}
+
 }
