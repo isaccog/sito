@@ -1,5 +1,5 @@
 <html>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"  />
   <title>Un sito isacco</title>
   <link rel="icon" type="image/png" href="\favicon.png">
 
@@ -144,7 +144,30 @@
 #click-warning.show {
   opacity: 1;
 }
+@media (max-width: 992px) {
+  .square {
+    width: 240px !important;
+    height: 240px !important;
+  }
+  .square .inner { font: 30px Arial, sans-serif !important;
+  }
 
+  .square.s1 {
+    transform: translate(-50%, -50%) rotate(0deg) translate(350px) !important;
+  }
+  .square.s2 {
+    transform: translate(-50%, -50%) rotate(72deg) translate(350px) !important;
+  }
+  .square.s3 {
+    transform: translate(-50%, -50%) rotate(144deg) translate(350px) !important;
+  }
+  .square.s4 {
+    transform: translate(-50%, -50%) rotate(216deg) translate(350px) !important;
+  }
+  .square.s5 {
+    transform: translate(-50%, -50%) rotate(288deg) translate(350px) !important;
+  }
+}
   </style>
 </head>
 
