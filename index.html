@@ -126,6 +126,25 @@
     .square.s5 .inner {
       transform: rotate(-288deg);
     }
+    #click-warning {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(50, 50, 50, 0.9);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 9999;
+}
+#click-warning.show {
+  opacity: 1;
+}
+
   </style>
 </head>
 
@@ -134,28 +153,61 @@
 <main>
   
 <div class="ring-container">
-  <div class="square s1"><div class="inner">Cose</div></div>
-  <div class="square s2"><div class="inner">Corrosione</div></div>
-  <div class="square s3"><div class="inner">Banalità</div></div>
-  <div class="square s4"><div class="inner">Assurdità</div></div>
-  <div class="square s5"><div class="inner">Cose di cose</div></div>
+  <div class="square s1" data-href="/descrizione.html"><div class="inner">Cose</div></div>
+  <div class="square s2" data-href="/pubblicita.html"><div class="inner">Corrosione</div></div>
+  <div class="square s3" data-href="/blog.html"><div class="inner">Banalità</div></div>
+  <div class="square s4" data-href="/bolle.html"><div class="inner">Assurdità</div></div>
+  <div class="square s5" data-href="/blog.html"><div class="inner">Cose di cose</div></div>
 </div>
-
+<div id="click-warning">I quadrati sono cliccabili solo quando illuminati.</div>
 </main>
+
 <script>
   const squares = document.querySelectorAll('.square');
+  const illuminationInterval = 300; // tempo visivo attivo
+  const clickableDuration = illuminationInterval * 2; // 1/4 prima + 1 + 1/4 dopo
   let currentIndex = 0;
+  let hasWarned = false;
+  let activeIndex = 0;
+  let lastActivatedTime = Date.now();
 
   function illuminateNext() {
     squares.forEach(sq => sq.classList.remove('active'));
-    squares[currentIndex].classList.add('active');
+    activeIndex = currentIndex;
+    squares[activeIndex].classList.add('active');
+    lastActivatedTime = Date.now();
     currentIndex = (currentIndex + 1) % squares.length;
   }
 
-  // Avvio: illumina il primo
   illuminateNext();
-  // Cambio ogni 1 secondo
-  setInterval(illuminateNext, 300);
+  setInterval(illuminateNext, illuminationInterval);
+
+  squares.forEach((square, index) => {
+  square.addEventListener('click', () => {
+    const now = Date.now();
+    const delta = now - lastActivatedTime;
+    if (
+      index === activeIndex &&
+      delta >= -illuminationInterval * 0.25 &&
+      delta <= clickableDuration - illuminationInterval * 0.25
+    ) {
+      const link = square.dataset.href;
+      if (link) {
+        window.location.href = link;
+      }
+    } else {
+      showWarning();
+    }
+  });
+});
+
+function showWarning() {
+  const warning = document.getElementById('click-warning');
+  warning.classList.add('show');
+  setTimeout(() => {
+    warning.classList.remove('show');
+  }, 4000); // 4 secondi visibile
+}
 </script>
 
   <div id="footer"></div>
