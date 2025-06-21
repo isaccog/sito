@@ -42,7 +42,10 @@
         document.getElementById('post-body').innerHTML = '<p>Articolo inesistente</p>';
         return;
       }
-
+      
+    
+      document.title = post.titolo || 'Articolo';
+      
       // Mostra i dati
       document.getElementById('post-body').innerHTML = `
         <h2 class="card-title">${post.titolo || 'Senza titolo'}</h2>

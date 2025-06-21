@@ -31,6 +31,9 @@
       // Recupera tutti gli articoli da Appwrite
       const response = await getRecordsAppWrite(null);
       const posts = response.documents;
+
+      // Ordina per data decrescente
+      posts.sort((a, b) => new Date(b.pubblicazione) - new Date(a.pubblicazione));
       
       const container = document.getElementById('posts-container');
       container.innerHTML = ''; // Pulizia contenitore
