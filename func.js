@@ -15,19 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-async function getRecordsAppWrite(id = null, project = '6790f26d002cb405c0af', db = '67b9b2060006cbdb292d', collection = '67b9b23a00059abb3c7d') {
-  const client = new Appwrite.Client();
-  client
-    .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject(project);
-
-  const databases = new Appwrite.Databases(client);
-  let query = [];
-  if (id) {
-    query.push(Appwrite.Query.equal('$id', id));
-  }
-  return await databases.listDocuments(db, collection, query);
-}
+async function getBlogPostById(id) {
+  const baseUrl = 'http://localhost:8000'; // o il tuo dominio online
+  try {
+    const response = await fetch(`${baseUrl}/blog/${id}`);
+    if (!response.ok) throw new Error("Articolo non trovato");
+    const data = await response.json();
+    return { documents: [data] }; // struttura compatibile
+  } catch (error) {
+    console.error("Errore durante il recupero:", error);
+    return { documents: [] };
+  }}
 
 // Rendi la funzione disponibile globalmente
-window.getRecordsAppWrite = getRecordsAppWrite;
+window.getBlogPostById = getBlogPostById;

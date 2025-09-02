@@ -27,43 +27,42 @@
  <script src="func.js"></script>
 <script>
   async function loadBlogPosts() {
-    try {
-      // Recupera tutti gli articoli da Appwrite
-      const response = await getRecordsAppWrite(null);
-      const posts = response.documents;
+  try {
+    // Chiamata al tuo backend FastAPI
+    const response = await fetch('https://backend-sito.onrender.com/blog');
+    const posts = await response.json();
 
-      // Ordina per data decrescente
-      posts.sort((a, b) => new Date(b.pubblicazione) - new Date(a.pubblicazione));
-      
-      const container = document.getElementById('posts-container');
-      container.innerHTML = ''; // Pulizia contenitore
+    // Ordina per data decrescente (se esiste "pubblicazione")
+    posts.sort((a, b) => new Date(b.pubblicazione) - new Date(a.pubblicazione));
 
-      posts.forEach(post => {
-        // Card Bootstrap
-        const colDiv = document.createElement('div');
-        colDiv.className = 'col-md-6 mb-4';
-        colDiv.innerHTML = `
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">
-                <a href="articolo.html?id=${post.$id}" class="text-decoration-none">${post.titolo || 'Senza titolo'}</a>
-              </h5>
-              <p class="card-text text-muted">
-                Pubblicato il ${new Date(post.pubblicazione).toLocaleDateString()}
-              </p>
-              <p class="card-text">
-                ${getExcerpt(post.testo)}
-              </p>
-              <a href="articolo.html?id=${post.$id}" class="btn btn-primary">Leggi di più</a>
-            </div>
+    const container = document.getElementById('posts-container');
+    container.innerHTML = '';
+
+    posts.forEach(post => {
+      const colDiv = document.createElement('div');
+      colDiv.className = 'col-md-6 mb-4';
+      colDiv.innerHTML = `
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <a href="articolo.html?id=${post.id}" class="text-decoration-none">${post.titolo || 'Senza titolo'}</a>
+            </h5>
+            <p class="card-text text-muted">
+              Pubblicato il ${new Date(post.pubblicazione).toLocaleDateString()}
+            </p>
+            <p class="card-text">
+              ${getExcerpt(post.testo)}
+            </p>
+            <a href="articolo.html?id=${post.id}" class="btn btn-primary">Leggi di più</a>
           </div>
-        `;
-        container.appendChild(colDiv);
-      });
-    } catch (error) {
-      console.error("Errore caricamento articoli:", error);
-    }
+        </div>
+      `;
+      container.appendChild(colDiv);
+    });
+  } catch (error) {
+    console.error("Errore caricamento articoli:", error);
   }
+}
 
   // Funzione di utilità per estrarre un estratto (ad esempio 150 caratteri)
   function getExcerpt(testo, lunghezza=150) {
