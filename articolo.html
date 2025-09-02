@@ -21,7 +21,6 @@
 </div>
 
 <!-- Script Appwrite + tuo file JS -->
-<script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0/dist/iife/sdk.min.js"></script>
 <script src="func.js"></script>
 <script>
   // Legge la query string e prende l'ID
@@ -35,7 +34,7 @@
     }
     try {
       // Recupera il documento specifico
-      const response = await getRecordsAppWrite(articoloId);
+      const response = await getBlogPostById(articoloId);
       const post = response.documents[0]; // Se c'è, è il primo
 
       if (!post) {

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function getBlogPostById(id) {
-  const baseUrl = 'http://localhost:8000'; // o il tuo dominio online
+  const baseUrl = 'https://backend-sito.onrender.com'; // o il tuo dominio online
   try {
     const response = await fetch(`${baseUrl}/blog/${id}`);
     if (!response.ok) throw new Error("Articolo non trovato");
