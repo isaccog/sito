@@ -23,13 +23,12 @@
 
 <!-- Script Appwrite + tuo file JS -->
  <!-- Includi l'SDK Appwrite dal CDN (una sola volta) -->
- <script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0/dist/iife/sdk.min.js"></script>
  <script src="func.js"></script>
 <script>
   async function loadBlogPosts() {
   try {
     // Chiamata al tuo backend FastAPI
-    const response = await fetch('https://backend-sito.onrender.com/blog');
+    const response = await fetch('http://localhost:8000/blog');
     const posts = await response.json();
 
     // Ordina per data decrescente (se esiste "pubblicazione")
