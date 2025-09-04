@@ -21,14 +21,18 @@
   </div>
 </div>
 
-<!-- Script Appwrite + tuo file JS -->
  <!-- Includi l'SDK Appwrite dal CDN (una sola volta) -->
  <script src="func.js"></script>
 <script>
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const BACKEND = isLocalhost
+    ? "http://localhost:8000"
+    : "https://backend-sito.onrender.com"; 
+  console.log("BACKEND =", BACKEND);
   async function loadBlogPosts() {
   try {
     // Chiamata al tuo backend FastAPI
-    const response = await fetch('http://localhost:8000/blog');
+    const response = await fetch(`${BACKEND}/blog`);
     const posts = await response.json();
 
     // Ordina per data decrescente (se esiste "pubblicazione")

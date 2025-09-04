@@ -43,32 +43,37 @@
   const storage = new Appwrite.Storage(client);
 
   async function loadImages() {
-    try {
-      const response = await databases.listDocuments('6841614a001d274615f5', '68416150002c1447e069');
-      const carousel = document.getElementById('carousel-images');
-      carousel.innerHTML = '';
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const BACKEND = isLocalhost
+    ? "http://localhost:8000"
+    : "https://backend-sito.onrender.com";
+  console.log("BACKEND =", BACKEND);
 
-      response.documents.forEach((doc, index) => {
-        const fileId = doc.storage;
-        const description = doc.Descrizione || '';
-        const imageUrl = storage.getFileView('68416183002c63abe190', fileId);
-        const activeClass = index === 0 ? 'active' : '';
-        const item = `
-          <div class="carousel-item ${activeClass}">
-            <img src="${imageUrl}" class="d-block w-100" alt="Immagine">
-            <div class="carousel-caption d-none d-md-block">
-              <p>${description}</p>
-            </div>
-          </div>`;
-        carousel.innerHTML += item;
-      });
+  try {
+    const response = await fetch(`${BACKEND}/prodotti`);
+    const images = await response.json();
 
-      document.getElementById('image-loader').style.display = 'none';
-      document.getElementById('imageCarousel').style.display = 'block';
-    } catch (error) {
-      console.error("Errore caricamento immagini:", error);
-    }
+    const carousel = document.getElementById('carousel-images');
+    carousel.innerHTML = '';
+
+    images.forEach((img, index) => {
+      const activeClass = index === 0 ? 'active' : '';
+      const item = `
+        <div class="carousel-item ${activeClass}">
+          <img src="${img.url}" class="d-block w-100" alt="Immagine">
+          <div class="carousel-caption d-none d-md-block">
+            <p>${img.didascalia || ''}</p>
+          </div>
+        </div>`;
+      carousel.innerHTML += item;
+    });
+
+    document.getElementById('image-loader').style.display = 'none';
+    document.getElementById('imageCarousel').style.display = 'block';
+  } catch (error) {
+    console.error("Errore caricamento immagini:", error);
   }
+}
 
 
 

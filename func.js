@@ -16,9 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function getBlogPostById(id) {
-  const baseUrl = 'https://backend-sito.onrender.com'; // o il tuo dominio online
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const BACKEND = isLocalhost
+    ? "http://localhost:8000"
+    : "https://backend-sito.onrender.com"; 
+  console.log("BACKEND =", BACKEND);
   try {
-    const response = await fetch(`${baseUrl}/blog/${id}`);
+    const response = await fetch(`${BACKEND}/blog/${id}`);
     if (!response.ok) throw new Error("Articolo non trovato");
     const data = await response.json();
     return { documents: [data] }; // struttura compatibile

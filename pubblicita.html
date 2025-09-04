@@ -44,99 +44,103 @@
     </main>
     <div id="footer"></div>
 
-<script>
-  const client = new Appwrite.Client();
-  client.setEndpoint('https://cloud.appwrite.io/v1').setProject('67ce05b00021f4e25caa');
+    <script>
+      const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
+      const BACKEND = isLocalhost
+        ? "http://localhost:8000"
+        : "https://backend-sito.onrender.com";
+    
+      async function loadImages() {
+        try {
+          const response = await fetch(`${BACKEND}/pubblicita`);
+          if (!response.ok) throw new Error("Errore fetch pubblicita");
+          const pubblicita = await response.json();
+    
+          const carousel = document.getElementById('carousel-images');
+          carousel.innerHTML = '';
+    
+          pubblicita.forEach((item, index) => {
+            const activeClass = index === 0 ? 'active' : '';
+            const html = `
+              <div class="carousel-item ${activeClass}">
+                <img src="${item.url}" class="d-block w-100" alt="Pubblicità">
+                <div class="carousel-caption d-none d-md-block">
+                  <p>${item.description || ''}</p>
+                </div>
+              </div>`;
+            carousel.innerHTML += html;
+          });
+    
+          document.getElementById('image-loader').style.display = 'none';
+          document.getElementById('imageCarousel').style.display = 'block';
+        } catch (error) {
+          console.error("Errore caricamento immagini:", error);
+        }
+      }
 
-  const databases = new Appwrite.Databases(client);
-  const storage = new Appwrite.Storage(client);
+      async function loadQuotes() {
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
+  const BACKEND = isLocalhost
+    ? "http://localhost:8000"
+    : "https://backend-sito.onrender.com";
 
-  async function loadImages() {
-    try {
-      const response = await databases.listDocuments('67ce05fd003b3c7b6b37', '67ce12a90008bc9b3aaf', [   Appwrite.Query.orderDesc('bucketId')]);      
-      const carousel = document.getElementById('carousel-images');
-      carousel.innerHTML = '';
+  try {
+    const response = await fetch(`${BACKEND}/citazioni`);
+    if (!response.ok) throw new Error("Errore fetch citazioni");
+    const quotes = await response.json();
 
-      response.documents.forEach((doc, index) => {
-        const fileId = doc.bucketId;
-        const description = doc.description || '';
-        const imageUrl = storage.getFileView('682b06cb0020fcc67bb5', fileId);
-        const activeClass = index === 0 ? 'active' : '';
-        const item = `
-          <div class="carousel-item ${activeClass}">
-            <img src="${imageUrl}" class="d-block w-100" alt="Immagine">
-            <div class="carousel-caption d-none d-md-block">
-              <p>${description}</p>
-            </div>
-          </div>`;
-        carousel.innerHTML += item;
-      });
+    const container = document.getElementById("quote-carousel-items");
+    if (!container) return;
 
-      document.getElementById('image-loader').style.display = 'none';
-      document.getElementById('imageCarousel').style.display = 'block';
-    } catch (error) {
-      console.error("Errore caricamento immagini:", error);
-    }
-  }
-
-  async function loadQuotes() {
-    try {
-      const response = await databases.listDocuments('67ce05fd003b3c7b6b37', '682b0983000008f244f5', [   Appwrite.Query.orderDesc('data')]);
-      const carousel = document.getElementById('carousel-quotes');
-      carousel.innerHTML = '';
-
-      response.documents.forEach((doc, index) => {
-        const quote = doc.cit || '';
-        const description = doc.description || '';
-        const activeClass = index === 0 ? 'active' : '';
-        const item = `
-          <div class="carousel-item ${activeClass}">
-            <div>"${quote}"<br><small>- ${description}</small></div>
-          </div>`;
-        carousel.innerHTML += item;
-      });
-
-      document.getElementById('quote-loader').style.display = 'none';
-      document.getElementById('quoteCarousel').style.display = 'block';
-    } catch (error) {
-      console.error("Errore caricamento citazioni:", error);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch('/header.html')
-      .then(resp => resp.text())
-      .then(data => document.getElementById('header').innerHTML = data);
-
-    fetch('/footer.html')
-      .then(resp => resp.text())
-      .then(data => document.getElementById('footer').innerHTML = data);
-
-    loadImages();
-    loadQuotes();
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch('/header.html')
-        .then(resp => resp.text())
-        .then(data => document.getElementById('header').innerHTML = data);
-
-    fetch('/footer.html')
-        .then(resp => resp.text())
-        .then(data => document.getElementById('footer').innerHTML = data);
-
-    loadImages().then(() => {
-        const imageCarouselElement = document.querySelector('#imageCarousel');
-        const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
-            interval: 20000, // 10 secondi
-            ride: 'carousel',
-            pause: 'hover' // Si ferma se passi sopra col mouse
-        });
+    container.innerHTML = "";
+    quotes.forEach((quote, index) => {
+      const activeClass = index === 0 ? "active" : "";
+      container.innerHTML += `
+        <div class="carousel-item ${activeClass}">
+          <div class="d-block w-100 p-4 text-center">
+            <blockquote class="blockquote">
+              <p>${quote.testo || ""}</p>
+              <footer class="blockquote-footer">${quote.autore || ""}</footer>
+            </blockquote>
+          </div>
+        </div>`;
     });
 
-    loadQuotes();
-});
-</script>
+    document.getElementById("quoteCarousel").style.display = "block";
+  } catch (error) {
+    console.error("Errore caricamento citazioni:", error);
+  }
+}
+    
+      document.addEventListener('DOMContentLoaded', () => {
+        fetch('/header.html').then(r => r.text()).then(d => document.getElementById('header').innerHTML = d);
+        fetch('/footer.html').then(r => r.text()).then(d => document.getElementById('footer').innerHTML = d);
+    
+        loadImages().then(() => {
+          const el = document.querySelector('#imageCarousel');
+          new bootstrap.Carousel(el, { interval: 10000, ride: 'carousel', pause: 'hover' });
+          addCarouselCounters();
+        });
+      });
+    
+      function addCarouselCounters() {
+        const carousel = document.getElementById('imageCarousel');
+        const counter = document.createElement('div');
+        counter.className = 'carousel-counter';
+        counter.id = 'image-counter';
+        carousel.appendChild(counter);
+        updateCounter('imageCarousel', 'image-counter');
+        carousel.addEventListener('slid.bs.carousel', () => {
+          updateCounter('imageCarousel', 'image-counter');
+        });
+      }
+    
+      function updateCounter(carouselId, counterId) {
+        const items = document.querySelectorAll(`#${carouselId} .carousel-item`);
+        const activeIndex = [...items].findIndex(i => i.classList.contains('active')) + 1;
+        document.getElementById(counterId).textContent = `${activeIndex}/${items.length}`;
+      }
+    </script>
 <script>
     // Aggiungi i counter dopo aver caricato le immagini e le citazioni
     function addCarouselCounters() {
