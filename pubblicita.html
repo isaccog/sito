@@ -118,7 +118,7 @@
     
         loadImages().then(() => {
           const el = document.querySelector('#imageCarousel');
-          new bootstrap.Carousel(el, { interval: 10000, ride: 'carousel', pause: 'hover' });
+          new bootstrap.Carousel(el, { interval: 30000, ride: 'carousel', pause: 'hover' });
           addCarouselCounters();
         });
       });
@@ -188,7 +188,7 @@
         loadImages().then(() => {
             const imageCarouselElement = document.querySelector('#imageCarousel');
             const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
-                interval: 10000,
+                interval: 30000,
                 ride: 'carousel',
                 pause: 'hover'
             });

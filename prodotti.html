@@ -101,7 +101,7 @@
     loadImages().then(() => {
         const imageCarouselElement = document.querySelector('#imageCarousel');
         const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
-            interval: 10000, // 10 secondi
+            interval: 30000, // 10 secondi
             ride: 'carousel',
             pause: 'hover' // Si ferma se passi sopra col mouse
         });
@@ -156,7 +156,7 @@
         loadImages().then(() => {
             const imageCarouselElement = document.querySelector('#imageCarousel');
             const imageCarousel = new bootstrap.Carousel(imageCarouselElement, {
-                interval: 10000,
+                interval: 30000,
                 ride: 'carousel',
                 pause: 'hover'
             });
