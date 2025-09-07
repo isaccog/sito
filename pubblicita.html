@@ -15,8 +15,8 @@
 <body>
     <div id="header"></div>
     <main>
-        <div class="gallery-title">Guida pornografica della pubblicita</div>
-        <div class="gallery-description">E' pornografico ciò che mostra esplicitamente qualcosa che si vorrebbe celato. 
+        <div codtrad="cronaca porn" class="gallery-title">Guida pornografica della pubblicita</div>
+        <div codtrad="cronaca description" class="gallery-description">E' pornografico ciò che mostra esplicitamente qualcosa che si vorrebbe celato. 
             <br>In questa raccolta di testi e immagini degli zelanti esperti di marketing non hanno coperto sufficentemente le oscenità che volevano raccontarci.
         </div>
 
@@ -177,13 +177,7 @@
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        fetch('/header.html')
-            .then(resp => resp.text())
-            .then(data => document.getElementById('header').innerHTML = data);
-    
-        fetch('/footer.html')
-            .then(resp => resp.text())
-            .then(data => document.getElementById('footer').innerHTML = data);
+ 
     
         loadImages().then(() => {
             const imageCarouselElement = document.querySelector('#imageCarousel');
@@ -200,7 +194,7 @@
         });
     });
     </script>
-    
+    <script src="/func.js"></script> <!-- Deve stare qui -->
     <script>
         function toggleMenu() {
           const menu = document.getElementById('fullScreenMenu');

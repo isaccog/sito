@@ -1,20 +1,51 @@
-// Definizione della funzione getRecordsAppWrite
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('/header.html')
-    .then(resp => resp.text())
-    .then(data => {
-      document.getElementById('header').innerHTML = data;
+async function loadLanguage(lang) {
+  try {
+    const res = await fetch(`/traduzioni/${lang}.json`);
+    const translations = await res.json();
+    document.querySelectorAll('[codtrad]').forEach(el => {
+      const key = el.getAttribute('codtrad');
+      if (translations[key]) el.innerHTML = translations[key];
     });
+  } catch (err) {
+    console.error("Errore caricamento lingua:", err);
+  }
+}
 
-  fetch('/footer.html')
-    .then(resp => resp.text())
-    .then(data => {
-      document.getElementById('footer').innerHTML = data;
+async function setupPage() {
+  // 1. Carica header e footer
+  await Promise.all([
+    fetch("/header.html").then(r => r.text()).then(html => {
+      document.getElementById("header").innerHTML = html;
+    }),
+    fetch("/footer.html").then(r => r.text()).then(html => {
+      document.getElementById("footer").innerHTML = html;
+    })
+  ]);
+
+  // 2. Dopo che header/footer sono nel DOM:
+  const lang = localStorage.getItem("lang") || "it";
+  if (lang !== "it") {
+    await loadLanguage(lang);
+  }
+
+  // 3. Listener lingua (ora che header è caricato)
+  const selector = document.getElementById("language-selector");
+  if (selector) {
+    selector.value = lang;
+    selector.addEventListener("change", () => {
+      const selected = selector.value;
+      localStorage.setItem("lang", selected);
+      if (selected === "it") {
+        location.reload();
+      } else {
+        loadLanguage(selected);
+      }
     });
-});
+  }
+}
 
+// ✅ Avvia quando DOM è pronto
+document.addEventListener("DOMContentLoaded", setupPage);
 async function getBlogPostById(id) {
   const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
   const BACKEND = isLocalhost
