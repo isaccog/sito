@@ -36,12 +36,6 @@
     <div id="footer"></div>
 
 <script>
-  const client = new Appwrite.Client();
-  client.setEndpoint('https://cloud.appwrite.io/v1').setProject('6841613b001bf294db61');
-
-  const databases = new Appwrite.Databases(client);
-  const storage = new Appwrite.Storage(client);
-
   async function loadImages() {
   const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
   const BACKEND = isLocalhost
@@ -50,7 +44,8 @@
   console.log("BACKEND =", BACKEND);
 
   try {
-    const response = await fetch(`${BACKEND}/prodotti`);
+    const lang = localStorage.getItem("lang") || "it";
+    const response = await fetch(`${BACKEND}/prodotti?lang=${lang}`);
     const images = await response.json();
 
     const carousel = document.getElementById('carousel-images');

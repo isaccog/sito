@@ -15,7 +15,7 @@
 <body>
   <div id="header"></div>
 <div class="container my-5">
-  <h1 class="text-center mb-4">Cose di cose</h1>
+  <h1 codtrad="cose_cose" class="text-center mb-4">Cose di cose</h1>
   <div class="row" id="posts-container">
     <!-- Qui inseriremo le card degli articoli -->
   </div>
@@ -24,6 +24,7 @@
  <!-- Includi l'SDK Appwrite dal CDN (una sola volta) -->
  <script src="func.js"></script>
 <script>
+  
   const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
   const BACKEND = isLocalhost
     ? "http://localhost:8000"
@@ -32,7 +33,8 @@
   async function loadBlogPosts() {
   try {
     // Chiamata al tuo backend FastAPI
-    const response = await fetch(`${BACKEND}/blog`);
+    const lang = localStorage.getItem("lang") || "it";
+    const response = await fetch(`${BACKEND}/blog?lang=${lang}`);
     const posts = await response.json();
 
     // Ordina per data decrescente (se esiste "pubblicazione")
@@ -80,6 +82,7 @@
 <div id="footer"></div>
 <!-- Bootstrap JS (necessario per il funzionamento del bottone del menù) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/func.js"></script> <!-- Deve stare qui -->
 </body>
 
 </html>

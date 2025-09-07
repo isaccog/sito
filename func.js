@@ -39,6 +39,10 @@ async function setupPage() {
         location.reload();
       } else {
         loadLanguage(selected);
+        if (typeof loadBlogPosts === "function") loadBlogPosts();
+        if (typeof loadArticle === "function") loadArticle();
+        if (typeof loadImages === "function") loadImages();
+        if (typeof loadQuotes === "function") loadQuotes();
       }
     });
   }
@@ -53,7 +57,8 @@ async function getBlogPostById(id) {
     : "https://backend-sito.onrender.com"; 
   console.log("BACKEND =", BACKEND);
   try {
-    const response = await fetch(`${BACKEND}/blog/${id}`);
+    const lang = localStorage.getItem("lang") || "it";
+    const response = await fetch(`${BACKEND}/blog/${id}?lang=${lang}`);
     if (!response.ok) throw new Error("Articolo non trovato");
     const data = await response.json();
     return { documents: [data] }; // struttura compatibile

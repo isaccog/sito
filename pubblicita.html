@@ -52,7 +52,8 @@
     
       async function loadImages() {
         try {
-          const response = await fetch(`${BACKEND}/pubblicita`);
+          const lang = localStorage.getItem("lang") || "it";
+          const response = await fetch(`${BACKEND}/pubblicita?lang=${lang}`);
           if (!response.ok) throw new Error("Errore fetch pubblicita");
           const pubblicita = await response.json();
     
@@ -85,7 +86,8 @@
     : "https://backend-sito.onrender.com";
 
   try {
-    const response = await fetch(`${BACKEND}/citazioni`);
+    const lang = localStorage.getItem("lang") || "it";
+    const response = await fetch(`${BACKEND}/citazioni?lang=${lang}`);
     if (!response.ok) throw new Error("Errore fetch citazioni");
     const quotes = await response.json();
 
