@@ -51,11 +51,6 @@ async function setupPage() {
 // ✅ Avvia quando DOM è pronto
 document.addEventListener("DOMContentLoaded", setupPage);
 async function getBlogPostById(id) {
-  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
-  const BACKEND = isLocalhost
-    ? "http://localhost:8000"
-    : "https://backend-sito.onrender.com"; 
-  console.log("BACKEND =", BACKEND);
   try {
     const lang = localStorage.getItem("lang") || "it";
     const response = await fetch(`${BACKEND}/blog/${id}?lang=${lang}`);

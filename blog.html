@@ -10,6 +10,7 @@
     rel="stylesheet" 
   />
   <link rel="stylesheet" href="/style.css">
+  <script src="/config.js"></script>
 </head>
 
 <body>
@@ -21,15 +22,7 @@
   </div>
 </div>
 
- <!-- Includi l'SDK Appwrite dal CDN (una sola volta) -->
- <script src="func.js"></script>
 <script>
-  
-  const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
-  const BACKEND = isLocalhost
-    ? "http://localhost:8000"
-    : "https://backend-sito.onrender.com"; 
-  console.log("BACKEND =", BACKEND);
   async function loadBlogPosts() {
   try {
     // Chiamata al tuo backend FastAPI
