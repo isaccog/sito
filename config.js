@@ -1,4 +1,4 @@
 const isLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
 const BACKEND = isLocalhost
   ? "http://localhost:8000"
-  : "https://backend-whatisacco-production.up.railway.app";
+  : "https://api.whatisacco.com";
