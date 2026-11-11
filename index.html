@@ -66,7 +66,7 @@
     }
 
     /* 
-      Distribuiamo i 5 quadrati a cerchio con un raggio di 250px.
+      Distribuiamo i 4 quadrati a cerchio con un raggio di 250px.
       Ognuno ha un'angolazione differente (rotate(angle)) 
       e dopo la traslazione aggiungiamo l'angolo negativo sull'.inner
 
@@ -77,54 +77,44 @@
                       .inner -> rotate(-72deg)
         ecc...
     */
-    .square.s1 {
-      background-color: #f00;  /* rosso */
+    .square.s2 {
+      background-color: #0f0;  /* verde */
       transform: translate(-50%, -50%)
                  rotate(0deg)
                  translate(250px);
     }
-    .square.s1 .inner {
-      transform: rotate(-0deg);
-    }
-
-    .square.s2 {
-      background-color: #0f0;  /* verde */
-      transform: translate(-50%, -50%)
-                 rotate(72deg)
-                 translate(250px);
-    }
     .square.s2 .inner {
-      transform: rotate(-72deg);
+      transform: rotate(0deg);
     }
 
     .square.s3 {
       background-color: #00f;  /* blu */
       transform: translate(-50%, -50%)
-                 rotate(144deg)
+                 rotate(90deg)
                  translate(250px);
     }
     .square.s3 .inner {
-      transform: rotate(-144deg);
+      transform: rotate(-90deg);
     }
 
     .square.s4 {
       background-color: #ffa500; /* arancione */
       transform: translate(-50%, -50%)
-                 rotate(216deg)
+                 rotate(180deg)
                  translate(250px);
     }
     .square.s4 .inner {
-      transform: rotate(-216deg);
+      transform: rotate(-180deg);
     }
 
     .square.s5 {
       background-color: #800080; /* viola */
       transform: translate(-50%, -50%)
-                 rotate(288deg)
+                 rotate(270deg)
                  translate(250px);
     }
     .square.s5 .inner {
-      transform: rotate(-288deg);
+      transform: rotate(-270deg);
     }
     #click-warning {
   position: fixed;
@@ -152,20 +142,17 @@
   .square .inner { font: 30px Arial, sans-serif !important;
   }
  
-  .square.s1 {
+  .square.s2 {
     transform: translate(-50%, -50%) rotate(0deg) translate(350px) !important;
   }
-  .square.s2 {
-    transform: translate(-50%, -50%) rotate(72deg) translate(350px) !important;
-  }
   .square.s3 {
-    transform: translate(-50%, -50%) rotate(144deg) translate(350px) !important;
+    transform: translate(-50%, -50%) rotate(90deg) translate(350px) !important;
   }
   .square.s4 {
-    transform: translate(-50%, -50%) rotate(216deg) translate(350px) !important;
+    transform: translate(-50%, -50%) rotate(180deg) translate(350px) !important;
   }
   .square.s5 {
-    transform: translate(-50%, -50%) rotate(288deg) translate(350px) !important;
+    transform: translate(-50%, -50%) rotate(270deg) translate(350px) !important;
   }
 }
   </style>
@@ -177,9 +164,6 @@
 <main>
   
 <div class="ring-container">
-  <div class="square s1" data-href="/bolle.html">
-    <div class="inner" codtrad="cose">Cose</div>
-  </div>
   <div class="square s2" data-href="/pubblicita.html">
     <div class="inner" codtrad="corrosione">Corrosione</div>
   </div>
