@@ -189,8 +189,8 @@
   <div class="square s4" data-href="/prodotti.html">
     <div class="inner" codtrad="assurdita">Assurdità</div>
   </div>
-  <div class="square s5" data-href="/blog.html">
-    <div class="inner" codtrad="cose_cose">Cose di cose</div>
+  <div class="square s5" data-href="https://scalami-identity-production.up.railway.app" data-external>
+    <div class="inner" codtrad="vendesi identita">Vendesi identità</div>
   </div></div>
   <div id="click-warning" codtrad="click-warning">
     I quadrati sono cliccabili solo quando illuminati.
@@ -226,7 +226,9 @@
       delta <= clickableDuration - illuminationInterval * 0.25
     ) {
       const link = square.dataset.href;
-      if (link) {
+      if (link && square.hasAttribute('data-external')) {
+        window.open(link, '_blank', 'noopener');
+      } else if (link) {
         window.location.href = link;
       }
     } else {
