@@ -1,4 +1,4 @@
-// func.js
+// site.js
 
 // Carica dinamicamente la SDK di Appwrite se non è già presente
 function loadAppwriteSDK(callback) {
